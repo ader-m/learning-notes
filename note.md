@@ -7,3 +7,4 @@ echo "# Day 1 学习笔记
 4.笔记：记录 caching_sha2_password 认证原理
 5.创建分支
 6.dgikhdoglkhddpohlgjdpo
+7."“这是在 dev 分支写的”"
