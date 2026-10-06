@@ -17,3 +17,8 @@ echo "# Day 1 学习笔记
 10.反连接 = LEFT JOIN + WHERE 右表.id IS NULL，专门找“A有、B没有”（183 题就是它）
 11.自连接 = 同一张表起两个别名（w1/w2）自己配自己，用来比“相邻行”（180、197）
 12.批量造数据：INSERT...SELECT + CROSS JOIN + RAND()
+HAVING 是筛组，WHERE 是筛行
+反连接 = LEFT JOIN + IS NULL，找“A有B没有”
+每组Top N 模板：内层窗口函数排 rnk，外层套壳 WHERE rnk=1
+196：DELETE + not in min(id)，MySQL 报错就给子查询套壳
+197：自连接 = 同一张表起两个别名自己配自己，datediff 算日期差
