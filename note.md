@@ -10,6 +10,10 @@ echo "# Day 1 学习笔记
 3. 密码全角半角的坑" > note.md
 4.笔记：记录 caching_sha2_password 认证原理
 5.创建分支
-6.dgikhdoglkhddpohlgjdpo
-7."“这是在 dev 分支写的”"
-8.git commit -m "Day3-5：SQL增删改查、查询五件套、三表设计与多表查询5题"
+6."“这是在 dev 分支写的”"
+7.git commit -m "Day3-5：SQL增删改查、查询五件套、三表设计与多表查询5题"
+8.JOIN 是把两张表按条件并排摆一起，on 写配对条件：A.id = B.a_id
+9.LEFT JOIN 保左表全留，右表配不上的填 NULL；INNER JOIN 只留两边都配上的
+10.反连接 = LEFT JOIN + WHERE 右表.id IS NULL，专门找“A有、B没有”（183 题就是它）
+11.自连接 = 同一张表起两个别名（w1/w2）自己配自己，用来比“相邻行”（180、197）
+12.批量造数据：INSERT...SELECT + CROSS JOIN + RAND()
