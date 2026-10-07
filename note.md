@@ -1,9 +1,4 @@
 
-标题AB合并版本
-
-
-echo "# Day 1 学习笔记
-
 ## 装 MySQL 踩的坑
 1. 端口 3306 被老的 5.7 占着
 2. DBeaver 要开 allowPublicKeyRetrieval
@@ -22,3 +17,14 @@ HAVING 是筛组，WHERE 是筛行
 每组Top N 模板：内层窗口函数排 rnk，外层套壳 WHERE rnk=1
 196：DELETE + not in min(id)，MySQL 报错就给子查询套壳
 197：自连接 = 同一张表起两个别名自己配自己，datediff 算日期差
+varchar int date或datetime
+insert into 表名 values()
+inner join 不匹配的直接消失,left join 左边保留，右边没有的直接null
+反连接 = LEFT JOIN + WHERE 右表.id IS NULL
+as是改名,rank是因为是保留字
+内层：窗口函数 dense_rank() over(partition by 分组列 order by 排序列 desc) as rnk
+外层：套壳 select + where rnk <= N
+datediff(a,b)=a-b
+git add是决定哪些改动要提交
+git commit=是把暂存区的改动保存版本记录
+
