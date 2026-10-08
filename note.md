@@ -1,7 +1,6 @@
 
 ## 装 MySQL 踩的坑
-6."“这是在 dev 分支写的”"
-7.git commit -m "Day3-5：SQL增删改查、查询五件套、三表设计与多表查询5题
+
 8.JOIN 是把两张表按条件并排摆一起，on 写配对条件：A.id = B.a_id
 9.LEFT JOIN 保左表全留，右表配不上的填 NULL；INNER JOIN 只留两边都配上的
 11.自连接 = 同一张表起两个别名（w1/w2）自己配自己，用来比“相邻行”（180、197）
@@ -21,14 +20,14 @@ as是改名,rank是因为是保留字
 datediff(a,b)=a-b
 git add是决定哪些改动要提交
 git commit=是把暂存区的改动保存版本记录
-pwd	我在哪（打印当前目录）	敲一下，看自己在哪
-ls	这里有什么	ls / ls -l（竖排带详情）/ ls -a（连隐藏文件）
-cd	去别的地方	cd ~（回家目录）→ cd /d → cd git操作练习
-mkdir	建文件夹	mkdir ~/linux练习 然后 cd 进去
-touch	建空文件	touch a.txt
-cp	复制	cp a.txt b.txt
+pwd	当前目录
+ls	文件夹下有什么	ls / ls -l（竖排带详情）/ ls -a（连隐藏文件）
+cd		→ cd /d → cd git操作练习
+mkdir	建 文件夹	mkdir ~/linux练习 然后 cd 进去
+touch	建 空文件	touch a.txt
+cp	复制 	cp a.txt b.txt
 mv	移动/改名	mv b.txt c.txt（改名）
-rm	删除	rm c.txt（⚠️ Linux 没有回收站，删了就是没了，所以永远先 ls 确认再删）
+rm	删除	rm c.txt
 find	找文件	find ~/linux练习 -name "a.txt"
 -rw-r--r--解读:-文件类型  rw-主人可读可写 r--同一个组只读 r--其他用户只读 
 ls -l ~/文件名/  查看现在什么权限
