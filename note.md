@@ -23,8 +23,8 @@ git commit=是把暂存区的改动保存版本记录
 pwd	当前目录
 ls	文件夹下有什么	ls / ls -l（竖排带详情）/ ls -a（连隐藏文件）
 cd		→ cd /d → cd git操作练习
-mkdir	建 文件夹	mkdir ~/linux练习 然后 cd 进去
-touch	建 空文件	touch a.txt
+mkdir	建 文件夹	mkdir ~/linux练习
+touch	建 空文件  touch a.txt
 cp	复制 	cp a.txt b.txt
 mv	移动/改名	mv b.txt c.txt（改名）
 rm	删除	rm c.txt
@@ -36,3 +36,9 @@ chmod 600 ~/文件名/ 文件所有者可读可写。组用户和其他用户不
 所有者也不能执行它
 tasklist | grep i mysql  找出有mysql的进程 i是大小写
 netstat -ano |grep 3306 找出占用3306的端口进程
+文件末加"第一周复盘"5 句话
+我学会了LInux一些命令pwd ls cd mkdir touch cp mv rm find
+印象最深的坑是没有
+高频错误没有
+下周要改的习惯不认真
+Leetcode 做完了你交给我的题目
