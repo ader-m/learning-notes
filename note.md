@@ -54,3 +54,6 @@ get是拿到数据
 post 提交数据
 put 是改数据
 delete 是删除数据
+
+cookie
+session
