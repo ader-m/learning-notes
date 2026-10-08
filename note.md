@@ -54,6 +54,9 @@ get是拿到数据
 post 提交数据
 put 是改数据
 delete 是删除数据
+httP流程图
+浏览器 -->|请求: 方法+URL+请求头+请求体| 服务器
+服务器 -->|响应: 状态码+响应头+响应体| 浏览器
 
-cookie
-session
+登录四步：登录前 Cookie 里没有身份 → 登录时 Set-Cookie 发通行证 → 之后每次请求浏览器自动带上 → 退出后作废
+- user_session 带着 Secure + HttpOnly + SameSite，
