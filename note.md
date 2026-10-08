@@ -60,3 +60,10 @@ httP流程图
 
 登录四步：登录前 Cookie 里没有身份 → 登录时 Set-Cookie 发通行证 → 之后每次请求浏览器自动带上 → 退出后作废
 - user_session 带着 Secure + HttpOnly + SameSite，
+
+1. requests.get/post   get查数据 post提交数据
+2. status_code 在哪看；  服务器返回的响应查看
+3. params / data / json 分别往哪放（拼 URL / 表单 / 请求体）  params放url里 data和json放在请求体里
+4. Session 帮我自动带 Cookie（联系昨天的登录流程）
+先有cookie 登录后有set cookie 
+请求 后自动带上session  退出登录后作废
