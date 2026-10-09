@@ -67,3 +67,10 @@ httP流程图
 4. Session 帮我自动带 Cookie（联系昨天的登录流程）
 先有cookie 登录后有set cookie 
 请求 后自动带上session  退出登录后作废
+
+
+1. 腾讯云轻量 + Ubuntu 22.04 + 广州，公网 IP 101.33.207.42
+2. 登录用户名是 ubuntu 不是 root
+3. ssh ubuntu@IP，输密码屏幕不显示是正常的
+4. chmod 600 在真 Linux 上真的变 rw-------
+5. 要 root 权限前面加 sudo
