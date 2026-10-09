@@ -74,3 +74,14 @@ httP流程图
 3. ssh ubuntu@IP，输密码屏幕不显示是正常的
 4. chmod 600 在真 Linux 上真的变 rw-------
 5. 要 root 权限前面加 sudo
+
+systemctl status ssh  可以看到activ(running)····
+sudo useradd -m -s /bin/bash devuser 创建第二个用户devuser
+sudo passwd devuser     输入decuser用户的新密码
+su - devuser  切换为 Devuser 的用户
+
+ps aux |grep sshd |grep -v grep
+
+ps aux:列出所有进程
+grep sshd 保留有sshd字样的进程
+grep -v grep 踢出有含有grep的sshd的进程
