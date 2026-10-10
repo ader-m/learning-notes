@@ -90,3 +90,10 @@ grep -v grep 踢出有含有grep的sshd的进程
 2. api.ipify.org 报 Connection refused，换 myip.ipip.net + httpbin 就通
 3. systemctl 日志看到境外 IP（35.205.78.99 谷歌云）在扫我 SSH 端口
 4. useradd 建的 devuser 默认没 sudo 权限，要 sudo usermod -aG sudo
+
+内层 dense_rank() over(partition by 分组列 order by 排序列 desc) as rnk；
+外层 select + where rnk <= N
+404找不到（url错误）403 禁止访问（资源存在但没权限）500 服务器内部错（代码有 bug）
+让内层结果变成带名字的临时表，外层能引用它的别名
+LEFT JOIN + where 右表.id is null；
+sudo = 借 root 身份执行这一行命令；useradd 建的用户默认不在 sudo 组，要 sudo usermod -aG sudo 用户名
