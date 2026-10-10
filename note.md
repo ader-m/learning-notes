@@ -97,3 +97,5 @@ grep -v grep 踢出有含有grep的sshd的进程
 让内层结果变成带名字的临时表，外层能引用它的别名
 LEFT JOIN + where 右表.id is null；
 sudo = 借 root 身份执行这一行命令；useradd 建的用户默认不在 sudo 组，要 sudo usermod -aG sudo 用户名
+
+浏览器向 http://127.0.0.1:8000/ 发出一个 HTTP 请求，最先接住它的是 uvicorn 这个服务器，它负责监听端口、收下原始的网络数据。uvicorn 把收到的字节解析成 HTTP 请求（方法、路径、请求头等），然后交给它上面挂着的 FastAPI 应用去处理。FastAPI 拿着请求里的路径 / 和请求方法 GET，去自己内部维护的路由表里查——这张表是你用 @app.get("/") 这样的装饰器一条条登记进去的。匹配到之后，FastAPI 调用对应的 read_root 函数，把函数返回的字典 {"message": "Hello World"} 拿到手。接着 FastAPI 把这个 Python 字典序列化成 JSON 字符串，再交回给 uvicorn。最后 uvicorn 把 JSON 包成完整的 HTTP 响应（状态码、响应头、响应体），通过 socket 发回浏览器，浏览器解析后显示出来。
