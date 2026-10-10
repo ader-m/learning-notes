@@ -85,3 +85,8 @@ ps aux |grep sshd |grep -v grep
 ps aux:列出所有进程
 grep sshd 保留有sshd字样的进程
 grep -v grep 踢出有含有grep的sshd的进程
+
+1. pip 装 requests 到 ~/.local（Ubuntu 22.04 的 PEP 668 不让装系统目录）
+2. api.ipify.org 报 Connection refused，换 myip.ipip.net + httpbin 就通
+3. systemctl 日志看到境外 IP（35.205.78.99 谷歌云）在扫我 SSH 端口
+4. useradd 建的 devuser 默认没 sudo 权限，要 sudo usermod -aG sudo
