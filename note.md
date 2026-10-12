@@ -119,3 +119,10 @@ pydantic里的basemodel 自带数据校验，类型转换，报错格式化
  @field_validator 在pydantic校验中抛422,  
  在函数体抛500
  validator 在 Pydantic 校验阶段抛 ValueError → Pydantic 用 try/except 接住 → 包装成 ValidationError → FastAPI 有专门处理器接它 → 返回 422。函数体里抛的异常不在校验阶段、没人接 → 500。
+
+
+ orm o:object r: relational m:mapping 对象映射关系，把面向对象编程的对象与数据库练习起来
+ orm 好处是可以少写重复sql,缺点是复杂查询难
+ 裸sql的好处是灵活强大 缺点是开发效率低，有sql注入风险
+ Base.metadata.create_all(engine)
+ 将类定义变成真实的数据表
