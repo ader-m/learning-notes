@@ -108,3 +108,9 @@ pydantic里的basemodel 自带数据校验，类型转换，报错格式化
 按 UserRegister 这个模板逐栏校验
 缺栏位 → 422；类型不对 → 422
 全过 → 打包成一个 UserRegister 对象塞给 user 变量，调用你的函数
+
+ Field(min_length=3,max_length=6)字段约束
+ zipcode字段不够长      会报字段需要大于自己写得到直段约束
+ 自定义校验器 @field_validator 抛 ValueError 后，FastAPI 怎么知道返回 422 而不是 500？
+ @field_validator 在pydantic校验中抛422,
+ 在函数体抛500
