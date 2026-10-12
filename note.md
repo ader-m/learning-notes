@@ -100,6 +100,10 @@ sudo = 借 root 身份执行这一行命令；useradd 建的用户默认不在 s
 
 浏览器向 http://127.0.0.1:8000/ 发出一个 HTTP 请求，最先接住它的是 uvicorn 这个服务器，它负责监听端口、收下原始的网络数据。uvicorn 把收到的字节解析成 HTTP 请求（方法、路径、请求头等），然后交给它上面挂着的 FastAPI 应用去处理。FastAPI 拿着请求里的路径 / 和请求方法 GET，去自己内部维护的路由表里查——这张表是你用 @app.get("/") 这样的装饰器一条条登记进去的。匹配到之后，FastAPI 调用对应的 read_root 函数，把函数返回的字典 {"message": "Hello World"} 拿到手。接着 FastAPI 把这个 Python 字典序列化成 JSON 字符串，再交回给 uvicorn。最后 uvicorn 把 JSON 包成完整的 HTTP 响应（状态码、响应头、响应体），通过 socket 发回浏览器，浏览器解析后显示出来。
 
+路径参数：在 URL 路径里（/items/5 的 5）
+查询参数：在 URL 问号后面（?q=hello 的 hello）
+请求体：不在 URL 里，藏在 POST 请求的 body 中
+
 
 pydantic里的basemodel 自带数据校验，类型转换，报错格式化
 当请求进来，FastAPI 做了四件事：
@@ -109,8 +113,9 @@ pydantic里的basemodel 自带数据校验，类型转换，报错格式化
 缺栏位 → 422；类型不对 → 422
 全过 → 打包成一个 UserRegister 对象塞给 user 变量，调用你的函数
 
- Field(min_length=3,max_length=6)字段约束
- zipcode字段不够长      会报字段需要大于自己写得到直段约束
+ username:str=Field(min_length=3,max_length=6)字段约束  username:str 只检查是不是字符串
+ zipcode字段不够长      会报字段需要大于自己写得到直段约束   loc 是 ["body","address","zipcode"]
  自定义校验器 @field_validator 抛 ValueError 后，FastAPI 怎么知道返回 422 而不是 500？
- @field_validator 在pydantic校验中抛422,
+ @field_validator 在pydantic校验中抛422,  
  在函数体抛500
+ validator 在 Pydantic 校验阶段抛 ValueError → Pydantic 用 try/except 接住 → 包装成 ValidationError → FastAPI 有专门处理器接它 → 返回 422。函数体里抛的异常不在校验阶段、没人接 → 500。
