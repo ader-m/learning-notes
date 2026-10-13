@@ -104,6 +104,13 @@ sudo = 借 root 身份执行这一行命令；useradd 建的用户默认不在 s
 查询参数：在 URL 问号后面（?q=hello 的 hello）
 请求体：不在 URL 里，藏在 POST 请求的 body 中
 
+Day16 第2问：username:str 省了什么代码？
+在 Pydantic 模型里写 username: str 这一个类型注解，FastAPI+Pydantic 就自动帮你做三件事：①从请求体 JSON 里取出 username；②校验它是不是字符串（不是就拦下返回 422）；③自动生成接口文档里的字段说明。
+如果不用 Pydantic，这些得自己手写：data = await request.json() 解析 → if not isinstance(username, str) 判断 → 再手动 return 422 报错。一行类型注解替代了这一坨样板代码。
+
+Day16 第3问：age="abc" 为什么返回 422？
+age 声明成 int，Pydantic 想把这个字符串 "abc" 转成整数，转换失败，报类型 int_parsing（无法把字符串解析成整数）。
+FastAPI 捕获后返回 422，错误定位 loc: ["body","age"] —— 意思是：出错位置在请求体(body)里的 age 字段。
 
 pydantic里的basemodel 自带数据校验，类型转换，报错格式化
 当请求进来，FastAPI 做了四件事：
@@ -126,3 +133,13 @@ pydantic里的basemodel 自带数据校验，类型转换，报错格式化
  裸sql的好处是灵活强大 缺点是开发效率低，有sql注入风险
  Base.metadata.create_all(engine)
  将类定义变成真实的数据表
+
+foreignkey 数据库的外键 ，告诉数据库这一列的值引用另一张表的某个列
+relationship orm的关系对象，写在类里面，通过对象访问关联数据
+foreignkey有外键，relationship按外键定义好的关联路径、用对象属性访问关联表（不是随便访问任何表） 两个一起配合：relationship告诉你查哪张关联表，foreignkey告诉你查那张表的哪一列
+
+一对多：一个班级多个学生，一个学生属于一个班级
+多对多：一个学生选多个课程，一个课程有多个学生选
+多对多要有张中间表，原因是没有单独的列能够存下这种关系
+
+commit() 时 SQLAlchemy 把你 append 进去的关联(student_id + course_id)自动写进 enrollment 表；secondary=enrollment 是告诉它"关联记录放这张表"的参数
