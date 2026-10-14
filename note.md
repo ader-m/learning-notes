@@ -164,3 +164,13 @@ Day15→21 复盘（自己口述版）：
  Depends(get_db) 调用处理函数前先执行 get_db 拿 session，处理完回到 finally 关掉
  resp() 让成功返回统一 {code,msg,data}；@app.exception_handler 让异常也走同一格式，前端不用区分两套结构
  HTTPException 管业务异常(404/403)，RequestValidationError 管参数校验失败(422)
+
+ FastAPI 用装饰器把「HTTP 方法 + URL 路径」绑定到一个 Python 函数
+校验字段类型，校验失败返回422
+一个类 = 一张表，一个属性 = 一列，一个实例 = 一行。
+Depends(get_db) 告诉 FastAPI：调用处理函数前，先执行 get_db。
+resp() 让成功返回格式统一：{code, msg, data}。
+
+@app.exception_handler(...) 让异常返回也走同一格式，前端不用区分两套结构。
+
+HTTPException 负责业务异常（404、403 等），RequestValidationError 负责参数校验失败（422）。
