@@ -143,3 +143,10 @@ foreignkey有外键，relationship按外键定义好的关联路径、用对象�
 多对多要有张中间表，原因是没有单独的列能够存下这种关系
 
 commit() 时 SQLAlchemy 把你 append 进去的关联(student_id + course_id)自动写进 enrollment 表；secondary=enrollment 是告诉它"关联记录放这张表"的参数
+
+Day20: FastAPI + SQLAlchemy 整合 —— 依赖注入 + 完整 CRUD
+依赖注入 get_db：每个请求开一个独立 session，yield 交出、finally 关掉，防连接泄漏（不关连接池会耗尽）
+为什么分 ItemCreate / ItemOut 两个模式：创建不传 id（id 是库生成的），返回必须带 id；ItemOut 的 from_attributes=True 让 Pydantic 能从 ORM 对象（不是 dict）读属性来序列化
+db.get(Item, id) 按主键查，没有返回 None；查不到用 HTTPException(404) 明确告诉前端，而不是让它变 500
+POST 完整流程：路由匹配 /items+POST → 依赖注入 get_db 拿 session → Pydantic 按 ItemCreate 校验请求体 → 建 ORM 对象 → add 进 session（待提交队列，还没落库）→ commit 真正写进 MySQL → refresh 拿回自增 id → return → FastAPI 按 response_model=ItemOut 把 ORM 对象序列化成 JSON 才返回
+坑：PUT 路由写成 /item 单数（应为 /items 复数），路由装饰器的路径就是客户端必须请求的 URL，写错会 404
