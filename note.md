@@ -150,3 +150,17 @@ Day20: FastAPI + SQLAlchemy 整合 —— 依赖注入 + 完整 CRUD
 db.get(Item, id) 按主键查，没有返回 None；查不到用 HTTPException(404) 明确告诉前端，而不是让它变 500
 POST 完整流程：路由匹配 /items+POST → 依赖注入 get_db 拿 session → Pydantic 按 ItemCreate 校验请求体 → 建 ORM 对象 → add 进 session（待提交队列，还没落库）→ commit 真正写进 MySQL → refresh 拿回自增 id → return → FastAPI 按 response_model=ItemOut 把 ORM 对象序列化成 JSON 才返回
 坑：PUT 路由写成 /item 单数（应为 /items 复数），路由装饰器的路径就是客户端必须请求的 URL，写错会 404
+
+Day21: 统一响应格式 + 全局异常处理（项目①规范第一步）
+为什么统一响应：前端不用每个接口判断不同返回结构，约定 {code:0成功/非0失败, msg:人看提示, data:真正数据}
+resp(code=0,msg="ok",data=None) 辅助函数：成功的接口 return resp(data=db_item)，不再用 response_model（否则会被序列化成单一模型结构，破坏统一）
+@app.exception_handler(HTTPException) 接管业务异常（404/403...）→ 包成 {code:状态码,msg:detail,data:null}
+@app.exception_handler(RequestValidationError) 接管参数校验失败（422）→ 包成 {code:422,msg:"参数校验失败",data:errors()}
+HTTPException 负责业务异常，RequestValidationError 负责 Pydantic 校验失败，两套要分别接管才能全统一
+{} 与 {"title":""} 区别：{} 缺 title 字段 → missing → 422；{"title":""} 有字段只是空串，空串也是合法 str → 校验通过返回成功（这是两回事）
+Day15→21 复盘（自己口述版）：
+ FastAPI 用装饰器把 HTTP方法+URL 绑定到一个函数；Pydantic 校验字段类型，失败返422
+ 一个类=一张表，一个属性=一列，一个实例=一行
+ Depends(get_db) 调用处理函数前先执行 get_db 拿 session，处理完回到 finally 关掉
+ resp() 让成功返回统一 {code,msg,data}；@app.exception_handler 让异常也走同一格式，前端不用区分两套结构
+ HTTPException 管业务异常(404/403)，RequestValidationError 管参数校验失败(422)
