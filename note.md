@@ -174,3 +174,12 @@ resp() 让成功返回格式统一：{code, msg, data}。
 @app.exception_handler(...) 让异常返回也走同一格式，前端不用区分两套结构。
 
 HTTPException 负责业务异常（404、403 等），RequestValidationError 负责参数校验失败（422）。
+
+Day22: 密码与安全（用户表+注册存哈希+登录verify）
+为什么明文存密码不行：库被拖库后所有密码直接暴露，且用户密码复用会撞库别的站
+bcrypt 比 md5/sha256 安全：md5/sha256 算得快，易被彩虹表/暴力破解反推；bcrypt 自动加盐+故意算得慢(抗暴力破解)，且单向不可逆(只能明文→哈希，不能反推)
+登录不是"解密比对"：把用户输的密码再 hash 一次，和库里存的哈希比对(pwd_context.verify)
+SQL 注入原理：拼接 SQL 把用户输入当指令执行，如 'admin' OR '1'='1' 变 WHERE username='admin' OR '1'='1' 永远成立→绕过
+ORM 防注入：参数化查询 WHERE username=%(u)s，用户输入只当"数据"永远不当"指令"
+踩坑：passlib 1.7.4 与 bcrypt 4.1+ 不兼容 → /register 500；修复 pip install "bcrypt==4.0.1" 后重启 uvicorn
+验收：register code:0带id / MySQL hashed_password=$2b$12$...非明文 / login正确密码code:0 / 错误密码code:401（全过）
