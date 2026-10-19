@@ -199,3 +199,14 @@ JWT 三段：header(算法类型).payload(claims:用户名/过期).signature(密
 无状态认证：服务器不存 session，凭 token 签名有效+未过期即信，重启/多机部署不受影响，不用每次查库确认登录
 验收：未登录/me→401 Not authenticated / 带alice正确token→200 / 乱填token→401（全过）
 踩坑：PowerShell 里 curl 是 Invoke-WebRequest 别名，不认 -H "字符串"；用 curl.exe 调系统真 curl 才行
+
+## Day 24｜权限控制（2026-10-19）
+目标：在 JWT 登录基础上加角色权限——普通用户只能删自己、管理员可删任何人、管理员专属接口仅管理员可见
+核心知识点：
+- 角色存数据库 user.role 列(VARCHAR 默认 'user')；已存在表加列不能靠 create_all(只建不存在的表)，要手跑 ALTER TABLE user ADD COLUMN role VARCHAR(20) NOT NULL DEFAULT 'user'
+- require_admin 依赖：先 Depends(get_current_user) 拿到当前用户，再 if role != "admin" → 403；管理员接口套上即受保护
+- delete_user 双分支放行：current_user.id == user_id(删自己) 或 current_user.role == "admin"(管理员) 才放行，否则 403
+- 401 vs 403：401=凭证缺失/无效，服务器根本不知你是谁(没登录或 token 错/过期)；403=凭证合法、身份确认了，但角色没这权限，服务器认识你但不让干
+- 角色放数据库而非写死代码：改权限只 UPDATE 一行，不用改代码/重部署；权限是"数据"不是"逻辑"，用户/角色多了只能靠数据管理(写死 if user=="alice" 把人和权限绑死，换人就得改代码)
+验收：bob GET /admin/users→403 / bob 删别人→403 / bob 删自己→200 / 管理员删别人→200（全过；独立启动服务跑库确认 v_bob/v_carol 行真消失）
+踩坑：user 表缺 role 列需先 ALTER + UPDATE alice 为 admin；贴"期望响应"冒充真实运行会被查库识破(真实 200 必 commit 掉一行)
