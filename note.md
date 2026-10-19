@@ -183,3 +183,19 @@ SQL 注入原理：拼接 SQL 把用户输入当指令执行，如 'admin' OR '1
 ORM 防注入：参数化查询 WHERE username=%(u)s，用户输入只当"数据"永远不当"指令"
 踩坑：passlib 1.7.4 与 bcrypt 4.1+ 不兼容 → /register 500；修复 pip install "bcrypt==4.0.1" 后重启 uvicorn
 验收：register code:0带id / MySQL hashed_password=$2b$12$...非明文 / login正确密码code:0 / 错误密码code:401（全过）
+
+## Day 23｜JWT 认证（2026-10-19）
+目标：登录成功签发 token，后续请求带 token 免传密码，未登录返回 401
+核心知识点：
+- OAuth2PasswordBearer(tokenUrl="login")：FastAPI 依赖，自动从 Authorization: Bearer <token> 头取 token
+- OAuth2PasswordRequestForm：登录用表单(非JSON)，OAuth2 密码流规定（/docs 的 Authorize 按钮只认表单）
+- jose 三件套：jwt.encode(payload,密钥,alg) 签发 / jwt.decode 验签+解析 / JWTError 接住所有解析失败(签名错/过期/格式错)
+- payload 标准字段：sub=用户身份(用户名/id)，exp=过期时间(jose 自动校验过期，超时就抛 JWTError)
+- SECRET_KEY 仅服务器知，泄露可伪造任意用户 token；生产放环境变量不写死
+- /login 返回 OAuth2 规定结构 {"access_token":...,"token_type":"bearer"}（统一响应{code,msg,data}的唯一例外，因要和标准协议对接）
+- get_current_user 依赖：解析 token→查用户，任何接口 Depends 即受保护，无/错 token 自动 401
+JWT 三段：header(算法类型).payload(claims:用户名/过期).signature(密钥对前两段签名)
+  - signature 防篡改：改前两段签名对不上；payload 仅 base64url 编码非加密，谁都能看懂→不放密码等敏感信息
+无状态认证：服务器不存 session，凭 token 签名有效+未过期即信，重启/多机部署不受影响，不用每次查库确认登录
+验收：未登录/me→401 Not authenticated / 带alice正确token→200 / 乱填token→401（全过）
+踩坑：PowerShell 里 curl 是 Invoke-WebRequest 别名，不认 -H "字符串"；用 curl.exe 调系统真 curl 才行
