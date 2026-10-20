@@ -210,3 +210,16 @@ JWT 三段：header(算法类型).payload(claims:用户名/过期).signature(密
 - 角色放数据库而非写死代码：改权限只 UPDATE 一行，不用改代码/重部署；权限是"数据"不是"逻辑"，用户/角色多了只能靠数据管理(写死 if user=="alice" 把人和权限绑死，换人就得改代码)
 验收：bob GET /admin/users→403 / bob 删别人→403 / bob 删自己→200 / 管理员删别人→200（全过；独立启动服务跑库确认 v_bob/v_carol 行真消失）
 踩坑：user 表缺 role 列需先 ALTER + UPDATE alice 为 admin；贴"期望响应"冒充真实运行会被查库识破(真实 200 必 commit 掉一行)
+
+## Day 25｜RESTful 设计规范（2026-10-20）
+目标：把 Day20-24 的待办/用户 API 路由按 REST 规范重构——名词复数、/api/v1 前缀、方法对齐语义、列表加分页
+核心知识点：
+- URL 定位资源用名词复数、带 /api/v1 前缀；动作交给 HTTP 方法(GET/POST/PUT/PATCH/DELETE)，路径里不放动词(放动词=信息重复，膨胀难维护)
+- 幂等：PUT/DELETE 幂等(同请求执行多次最终状态一致)、POST 非幂等(每次都是新创建)；网络超时≠失败(请求没到/处理一半崩/已成功但响应丢失三态)，POST 重试会建重复→新建用 POST、改删设计成幂等
+- 201 vs 204 vs 200：200 查/改成功有体；201 新建成功(规范上应带 Location 头指新资源 URI，客户端不用自己拼地址)；204 删除无响应体。本计划选方案 A：保留统一响应 {code,msg,data}，只把 HTTP 码改对(201 建、200 删)，业务码与传输码分工不冲突
+- 列表三件套：分页 ?page&size → SQL offset=(page-1)*size, limit=size；过滤 ?status= → WHERE；排序 ?sort=-price → -表倒序 ORDER BY price DESC
+- 分页必坑：total 必须在 offset/limit 之前 count()，否则数的是切片后条数(永远≤size)，前端分页器废
+- 深分页代价(进阶)：OFFSET 线性扫行(第5万页≈数百ms)、COUNT(*) 额外开销、写并发下 offset 窗口漂移导致漏/重数据(解法：游标/keyset 分页 WHERE id>上一页末 LIMIT n，成本与位置无关)
+- /api 区分接口与页面、/v1 版本声明做非破坏性演进(老客户端继续 v1、新客户端迁 v2 并行)
+验收：/docs 全路由带 /api/v1；POST /api/v1/items 返 201；GET /api/v1/items?page=1&size=2 返 items 恰 2 条 + total + page/size；DELETE 真实生效(独立跑：POST 201 / GET total=10 / DELETE 后 total 10→9 确认行真消失)
+踩坑：PowerShell 里 `curl.exe -d "{\"title\":...}"` 双引号包 JSON 会被 PowerShell 吞掉引号和花括号、中文还乱码(GBK 误读)→ 服务器收残 JSON 报 422 JSON decode error；正确写法是 `-d` 用单引号 `'{"title":"milk","price":3.5}'`，或写文件法 `Set-Content body.json -Value '...' -Encoding utf8` + `-d "@body.json"`
